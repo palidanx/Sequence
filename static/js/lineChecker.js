@@ -30,10 +30,10 @@ exports.checkForLines = function(board, _row, _col){
 	var c1 = Math.max(0, col - 4);
 	var c2 = Math.min(9, col + 4);
 
-	var horizontal = checkHorizontal([r1,r2], [c1,c2], row, col, board);
-	var vertical = checkVertical([r1,r2], [c1,c2], row, col, board);
-	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, board);
-	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, board);
+	var horizontal = checkHorizontal([r1,r2], [c1,c2], row, col, tdboard);
+	var vertical = checkVertical([r1,r2], [c1,c2], row, col, tdboard);
+	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
+	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 
 	if (horizontal != null){
 		if (horizontal[0] == 2){
