@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+  <link rel="stylesheet" href="/css/stylesheet.css" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/ejs_production.js"></script>
+  <script src="/js/game.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  
+  </head>
+  <body onload = "initializeTable('<%=playerHand %>', '<%= playerColor %>', '<%= board %>', '<%= num %>', '<%= numPlayers %>', '<%= currentTurn %>')">
+  <div class="row">
+   <div class="col l6" id = "gameBoard">
+    <div class="row r0 cardsRow">
+    <div class="col l1 cardColumn" ></div>
+    <div class="col l1 c0 cardColumn" id="r0c0">
+    </div>
+    <div class="col l1 c1 cardColumn" id="r0c1">
+      <img src='/images/cards/clubs/ace_of_clubs.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r0c2">
+      <img src='/images/cards/clubs/king_of_clubs.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r0c3">
+      <img src='/images/cards/clubs/queen_of_clubs.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r0c4">
+      <img src='/images/cards/clubs/10_of_clubs.png'/>
+    </div>
+
+    <div class="col l1 c5 cardColumn" id="r0c5">        
+      <img src='/images/cards/clubs/9_of_clubs.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r0c6">
+      <img src='/images/cards/clubs/8_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r0c7">
+      <img src='/images/cards/clubs/7_of_clubs.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r0c8" >
+      <img src='/images/cards/clubs/8_of_clubs.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r0c9"></div>
+      </div>
+     <div class="row r1 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r1c0">
+      <img src='/images/cards/diamonds/ace_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r1c1">
+      <img src='/images/cards/spades/7_of_spades.png'/>    
+    </div>
+    <div class="col l1 c2 cardColumn" id="r1c2">
+      <img src='/images/cards/spades/8_of_spades.png'/>    
+    </div>
+    <div class="col l1 c3 cardColumn" id="r1c3">
+      <img src='/images/cards/spades/9_of_spades.png'/>    
+    </div>
+    <div class="col l1 c4 cardColumn" id="r1c4">
+      <img src='/images/cards/spades/10_of_spades.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r1c5">
+      <img src='/images/cards/spades/queen_of_spades.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r1c6">
+      <img src='/images/cards/spades/king_of_spades.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r1c7">
+      <img src='/images/cards/spades/ace_of_spades.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r1c8">
+      <img src='/images/cards/clubs/5_of_clubs.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r1c9">
+      <img src='/images/cards/spades/2_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r2 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r2c0">
+      <img src='/images/cards/diamonds/king_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r2c1">
+      <img src='/images/cards/spades/6_of_spades.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r2c2">
+      <img src='/images/cards/clubs/10_of_clubs.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r2c3">
+      <img src='/images/cards/clubs/9_of_clubs.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r2c4">
+      <img src='/images/cards/clubs/8_of_clubs.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r2c5">
+      <img src='/images/cards/clubs/7_of_clubs.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r2c6">
+      <img src='/images/cards/clubs/6_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r2c7">
+      <img src='/images/cards/diamonds/2_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r2c8">
+      <img src='/images/cards/clubs/4_of_clubs.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r2c9">
+      <img src='/images/cards/spades/3_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r3 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r3c0">
+      <img src='/images/cards/diamonds/queen_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r3c1">
+      <img src='/images/cards/spades/5_of_spades.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r3c2">
+      <img src='/images/cards/clubs/queen_of_clubs.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r3c3">
+      <img src='/images/cards/hearts/8_of_hearts.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r3c4">
+      <img src='/images/cards/hearts/7_of_hearts.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r3c5">
+      <img src='/images/cards/hearts/6_of_hearts.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r3c6">
+      <img src='/images/cards/clubs/5_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r3c7">
+      <img src='/images/cards/diamonds/3_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r3c8">
+      <img src='/images/cards/clubs/3_of_clubs.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r3c9">
+      <img src='/images/cards/spades/4_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r4 cardsRow">
+    <div class="col l1 cardColumn" ></div>
+    <div class="col l1 c0 cardColumn" id="r4c0">
+      <img src='/images/cards/diamonds/10_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r4c1">
+      <img src='/images/cards/spades/4_of_spades.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r4c2">
+      <img src='/images/cards/clubs/king_of_clubs.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r4c3">
+      <img src='/images/cards/hearts/9_of_hearts.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r4c4">
+      <img src='/images/cards/hearts/2_of_hearts.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r4c5">
+      <img src='/images/cards/hearts/5_of_hearts.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r4c6">
+      <img src='/images/cards/clubs/4_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r4c7">
+      <img src='/images/cards/diamonds/4_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r4c8">
+      <img src='/images/cards/clubs/2_of_clubs.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r4c9">
+      <img src='/images/cards/spades/5_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r5 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r5c0">
+      <img src='/images/cards/diamonds/9_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r5c1">
+      <img src='/images/cards/spades/3_of_spades.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r5c2">
+      <img src='/images/cards/clubs/ace_of_clubs.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r5c3">
+      <img src='/images/cards/hearts/10_of_hearts.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r5c4">
+      <img src='/images/cards/hearts/3_of_hearts.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r5c5">
+      <img src='/images/cards/hearts/4_of_hearts.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r5c6">
+      <img src='/images/cards/clubs/3_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r5c7">
+      <img src='/images/cards/diamonds/5_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r5c8">
+      <img src='/images/cards/hearts/ace_of_hearts.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r5c9">
+      <img src='/images/cards/spades/6_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r6 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r6c0">
+      <img src='/images/cards/diamonds/8_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r6c1">
+      <img src='/images/cards/spades/2_of_spades.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r6c2">
+      <img src='/images/cards/diamonds/ace_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r6c3">
+      <img src='/images/cards/hearts/queen_of_hearts.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r6c4">
+      <img src='/images/cards/hearts/king_of_hearts.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r6c5">
+      <img src='/images/cards/hearts/ace_of_hearts.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r6c6">
+      <img src='/images/cards/clubs/2_of_clubs.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r6c7">
+      <img src='/images/cards/diamonds/6_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r6c8">
+      <img src='/images/cards/hearts/king_of_hearts.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r6c9">
+      <img src='/images/cards/spades/7_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r7 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r7c0">
+      <img src='/images/cards/diamonds/7_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r7c1">
+      <img src='/images/cards/hearts/2_of_hearts.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r7c2">
+      <img src='/images/cards/diamonds/king_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r7c3">
+      <img src='/images/cards/diamonds/queen_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r7c4">
+      <img src='/images/cards/diamonds/10_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r7c5">
+      <img src='/images/cards/diamonds/9_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r7c6">
+      <img src='/images/cards/diamonds/8_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r7c7">
+      <img src='/images/cards/diamonds/7_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r7c8">
+      <img src='/images/cards/hearts/queen_of_hearts.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r7c9">
+      <img src='/images/cards/spades/8_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r8 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r8c0">
+      <img src='/images/cards/diamonds/6_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c1 cardColumn" id="r8c1">
+      <img src='/images/cards/hearts/3_of_hearts.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r8c2">
+      <img src='/images/cards/hearts/4_of_hearts.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r8c3">
+      <img src='/images/cards/hearts/5_of_hearts.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r8c4">
+      <img src='/images/cards/hearts/6_of_hearts.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r8c5">
+      <img src='/images/cards/hearts/7_of_hearts.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r8c6">
+      <img src='/images/cards/hearts/8_of_hearts.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r8c7">
+      <img src='/images/cards/hearts/9_of_hearts.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r8c8">
+      <img src='/images/cards/hearts/10_of_hearts.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r8c9">
+      <img src='/images/cards/spades/9_of_spades.png'/>
+    </div>
+  </div>
+  <div class="row r9 cardsRow">
+    <div class="col l1 cardColumn"></div>
+    <div class="col l1 c0 cardColumn" id="r9c0"></div>
+    <div class="col l1 c1 cardColumn" id="r9c1">
+      <img src='/images/cards/diamonds/5_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c2 cardColumn" id="r9c2">
+      <img src='/images/cards/diamonds/4_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c3 cardColumn" id="r9c3">
+      <img src='/images/cards/diamonds/3_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c4 cardColumn" id="r9c4">
+      <img src='/images/cards/diamonds/2_of_diamonds.png'/>
+    </div>
+    <div class="col l1 c5 cardColumn" id="r9c5">
+      <img src='/images/cards/spades/ace_of_spades.png'/>
+    </div>
+    <div class="col l1 c6 cardColumn" id="r9c6">
+      <img src='/images/cards/spades/king_of_spades.png'/>
+    </div>
+    <div class="col l1 c7 cardColumn" id="r9c7">
+      <img src='/images/cards/spades/queen_of_spades.png'/>
+    </div>
+    <div class="col l1 c8 cardColumn" id="r9c9">
+      <img src='/images/cards/spades/10_of_spades.png'/>
+    </div>
+    <div class="col l1 c9 cardColumn" id="r9c9">
+    </div>
+  </div>
+</div>
+
+<div id="playerHand" class="col l6">
+</div>
+</div>
+
+  </body>
+</html>

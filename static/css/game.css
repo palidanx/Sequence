@@ -1,0 +1,47 @@
+
+body{
+	background-color: #afbac5;
+}
+
+.cardsRow {
+}
+
+.cardColumn {
+  margin: 1px;
+}
+
+.cardColumn img {
+  height: auto;
+  width: 90%;
+  border: 2px solid black;
+  border-radius: 6px;
+  margin: 1px solid black;
+}
+
+#gameBoard {
+	margin-top:20px;
+}
+
+.row {
+  margin-bottom: 0px !important;
+  border:0px;
+}
+
+.row .col {
+  padding: 0px !important;
+}
+
+
+.gameBoard.row.col.l1 {
+  width: 48px !important;
+}
+.playerCard img {
+	height:65px;
+	margin: 5px;
+	border: 2px solid;
+	border-radius: 10px;
+}
+
+.rightSide {
+  margin-top: 20px;
+}

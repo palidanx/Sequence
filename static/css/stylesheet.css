@@ -1,0 +1,17 @@
+body {
+	background-color: white;
+	font-family: 'Montserrat', sans-serif;
+}
+
+#title {
+    font-size: -webkit-xxx-large;
+    color: white;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+}
+
+.gameOptionBtn{
+	margin-top: 10px;
+}
+/* app css stylesheet */
+
