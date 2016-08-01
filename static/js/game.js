@@ -150,8 +150,40 @@ function convertBoardInto2DArray(board, playerColor){
 	console.log(tdboard);
 	return tdboard;
 }
-function renderLineArray(lineArray){
+function renderLine(lineArray){
 	console.log(lineArray);
+}
+function makeUserChooseLine(lineArray){
+	var numPos = lineArray.length - 4;
+	var possibleLines = [];
+	var tempLine = [];
+	for (var i = 0 ; i < numPos; i++){
+		for (var j = 0 ; j < 5 ; j++){
+			tempLine[j] = lineArray[i + j];
+		}
+		possibleLines[i] = tempLine;
+		tempLine = [];
+	}
+}
+
+function checkAndRender(line){
+	if (line == null)
+		return null;
+	if (line[0] == 2){
+		renderLine(line[1]);
+		score += 2;
+		return 2;
+	}
+	if (line[2] == false){
+		renderLine(line[1]);
+		score++;
+		return 1;
+	}
+	if (line[2] == true){
+		renderLine(makeUserChooseLine(line[1]));
+		score++;
+		return 1;
+	}
 }
 
 function checkForLines(board, _row, _col){
@@ -171,61 +203,10 @@ function checkForLines(board, _row, _col){
 	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 
-
-	/*if (horizontal != null){
-		if (horizontal[0] == 2){
-			renderLineArray(horizontal[1]);
-			madeLine();
-			madeLine();
-		}
-		else if (horizontal[2] == true){
-			var lineArray = makeUserChooseLine(horizontal[1]);
-			renderLineArray(lineArray);
-			madeLine()
-		}
-		else{
-			renderLineArray(horizontal[1]);
-			madeLine();
-
-		}
-	}
-	if (vertical != null){
-		if (vertical[0] == 2){
-			renderLineArray(vertical[1]);
-		}
-		else if (vertical[2] == true){
-			var lineArray = makeUserChooseLine(vertical[1]);
-			renderLineArray(lineArray);
-		}
-		else{
-			renderLineArray(vertical[1]);
-		}
-	}
-	if (ndiagonal != null){
-		if (ndiagonal[0] == 2){
-			renderLineArray(ndiagonal[1]);
-		}
-		else if (ndiagonal[2] == true){
-			var lineArray = makeUserChooseLine(ndiagonal[1]);
-			renderLineArray(lineArray);
-		}
-		else{
-			renderLineArray(ndiagonal[1]);
-		}
-	}
-	if (pdiagonal != null){
-		if (pdiagonal[0] == 2){
-			renderLineArray(pdiagonal[1]);
-		}
-		else if (pdiagonal[2] == true){
-			var lineArray = makeUserChooseLine(pdiagonal[1]);
-			renderLineArray(lineArray);
-		}
-		else{
-			renderLineArray(pdiagonal[1]);
-		}
-	}
-*/
+	checkAndRender(horizontal);
+	checkAndRender(vertical);
+	checkAndRender(ndiagonal);
+	checkAndRender(pdiagonal);
 }
 
 function checkHorizontal(rArray, cArray, row, col, tdboard){
