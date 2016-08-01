@@ -227,7 +227,7 @@ exports.checkNDiagonal = function(rArray, cArray, row, col, board){
 	}
 	return null;
 }
-exports.checkFDiagonal = function(rArray, cArray, row, col, board){
+exports.checkPDiagonal = function(rArray, cArray, row, col, board){
 	var r1= rArray[0];
 	var r2 = rArray[1];
 	var c1 = cArray[0];
