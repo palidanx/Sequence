@@ -26,9 +26,9 @@ exports.checkForLines = function(board, _row, _col){
 	var row = parseInt(_row);
 	var col = parseInt(_col);
 	var r1 = Math.max(0, row - 4);
-	var r2 = Math.min(10, row + 4);
+	var r2 = Math.min(9, row + 4);
 	var c1 = Math.max(0, col - 4);
-	var c2 = Math.min(10, col + 4);
+	var c2 = Math.min(9, col + 4);
 
 	var horizontal = checkHorizontal([r1,r2], [c1,c2], row, col, board);
 	var vertical = checkVertical([r1,r2], [c1,c2], row, col, board);
