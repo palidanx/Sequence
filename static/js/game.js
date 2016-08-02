@@ -437,6 +437,11 @@ $("html").click(function(e){
 	var col = coordinate[3];
 	var currentPiece = board[parseInt(row + col)];
 
+	if (currentPiece[currentPiece.length - 1] == 'l'){
+		console.log("Part of line already, can't be touched");
+		return null;
+	}
+
 	if (currentPiece == playerColor){
 		console.log("Thats your piece");
 		return null;

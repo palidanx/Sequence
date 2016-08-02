@@ -22,7 +22,7 @@ $(document).ready(function(){
 });
 
 function startGame() {
-	$.post(baseUrl + 'initializeGame/' + gameKey, {}, function(data){
+	$.get(baseUrl + 'initializeGame/' + gameKey, {}, function(data){
 		document.location.href = baseUrl + gameKey + '/game/' + playerKey;
 		lobbySocket.emit('Game Started', {
 			gameKey: gameKey
