@@ -37,6 +37,18 @@ function renderBoard(board){
 					case "red": 
 						$("#" + idString + " img").css("border", "5px solid red");
 						break;
+					case "bluel":
+						$("#" + idString + " img").css({"border": "6px solid blue",
+														'opacity': '0.5'});
+						break;
+					case "greenl":
+						$("#" + idString + " img").css({"border": "6px solid green",
+														'opacity': '0.5'});
+						break;
+					case "redl": 
+						$("#" + idString + " img").css({"border": "6px solid red",
+														'opacity': '0.5'});
+						break;
 				}
 			}
 		}
@@ -152,6 +164,14 @@ function convertBoardInto2DArray(board, playerColor){
 }
 function renderLine(lineArray){
 	console.log(lineArray);
+	var url = 'http://localhost:8080/' + gameKey + '/madeLine/' + playerKey;
+	$.post(url, {
+		lineArray: lineArray
+	}, function(data){
+		board = data.board;
+		renderBoard(board);
+	})
+
 }
 function makeUserChooseLine(lineArray){
 	var numPos = lineArray.length - 4;

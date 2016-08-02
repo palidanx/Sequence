@@ -39,6 +39,13 @@ lobbySocket.on('connection', function(socket){
 				playerName: data.playerName
 			});
 		})
+		socket.on('Game Started', function(data, err){
+			var gameKey = data.gameKey;
+			console.log('Started Game');
+			lobbySocket.emit('Game Started ' + gameKey, {
+				message: 'Game Started by owner'
+			});
+		})
 });
 
 gameSocket.on('connection', function(socket){
@@ -101,7 +108,8 @@ router.get('/:gameKey/lobby/:playerKey', function(req,res){
 		var players = snapshot.val().players;
 		res.render('lobby', {
 			owner: ownerName,
-			players: players
+			players: players,
+			playerKey: playerKey
 		});
 	})
 })
@@ -168,7 +176,7 @@ router.post('/joinGame', function(req, res){
 	})	
 })
 
-router.post("/initializeGame/:gameKey", function(req, res) {
+router.get("/initializeGame/:gameKey", function(req, res) {
 
 	var gameKey = req.params.gameKey;
 	var numPlayers, remainingDeck, board, firebasePlayers;
@@ -260,14 +268,22 @@ router.post("/removePiece/:gameKey", function(req, res){
 	res.send('moveCompleted');
 });
 
-router.post("/madeLine/:gameKey", function(req, res){
+router.post("/:gameKey/madeLine/:playerKey", function(req, res){
 	var gameKey = req.params.gameKey;
-	var playerId = req.body.playerId;
-	var row = req.body.row;
-	var col = req.body.col;
-	firebaseGames.child(gameKey).on('value', function(snapshot){
-		var score = snapshot.val().players.playerId.score + 1;
-		firebaseGames.child(gameKey+"/players/"+playerId+"/score").set(score);
+	var playerKey = req.params.playerKey;
+	var lineArray = req.body.lineArray;
+	firebaseGames.child(gameKey + '/game').on('value', function(snapshot){
+		var data = snapshot.val();
+		var board = data.board;
+		for (var i = 0 ; i < lineArray.length; i++){
+			board[lineArray[i][0]][lineArray[i][1]] += 'l';
+		}
+		var score = data.players.playerKey.score + 1;
+		firebaseGames.child(gameKey + "/game/players/" + playeKey + "/score").set(score);
+		firebaseGames.child(gameKey + "/game/board").set(board);
+		res.send({
+			board: board
+		});
 	});
 })
 
