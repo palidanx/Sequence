@@ -80,6 +80,7 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 		var player = data.players[playerKey];
 		var numPlayers = data.numPlayers;
 		var currentPlayer = data.players[data.currentTurn];
+		var players = data.players;
 		res.render('game', {
 			player: player,
 			playerColor: player.color,
@@ -90,7 +91,8 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 			num: player.num,
 			numPlayers: numPlayers,
 			currentTurn: data.currentTurn,
-			currentName: data.players[data.currentTurn].name
+			currentName: data.players[data.currentTurn].name,
+			players: data.players
 		});
 	})
 });

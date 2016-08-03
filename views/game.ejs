@@ -18,9 +18,9 @@
 </head>
 <body onload = "initializeTable('<%=playerHand %>', '<%= playerColor %>', '<%= board %>', '<%= num %>', '<%= numPlayers %>', '<%= currentTurn %>', '<%= currentName %>')">
   <div class="row">
-   <div class="col l6" id = "gameBoard">
+   <div class="col " id = "gameBoard">
     <div class="row r0 cardsRow">
-      <div class="col l1 cardColumn" >
+      <div class="col l1 b cardColumn" >
       </div>
       <div class="col l1 c0 cardColumn" id="r0c0">
         <img src='/images/corner.png'/>
@@ -55,7 +55,7 @@
       </div>
     </div>
     <div class="row r1 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r1c0">
         <img src='/images/cards/diamonds/ace_of_diamonds.png'/>
       </div>
@@ -88,7 +88,7 @@
       </div>
     </div>
     <div class="row r2 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r2c0">
         <img src='/images/cards/diamonds/king_of_diamonds.png'/>
       </div>
@@ -121,7 +121,7 @@
       </div>
     </div>
     <div class="row r3 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r3c0">
         <img src='/images/cards/diamonds/queen_of_diamonds.png'/>
       </div>
@@ -154,7 +154,7 @@
       </div>
     </div>
     <div class="row r4 cardsRow">
-      <div class="col l1 cardColumn" ></div>
+      <div class="col l1 b cardColumn" ></div>
       <div class="col l1 c0 cardColumn" id="r4c0">
         <img src='/images/cards/diamonds/10_of_diamonds.png'/>
       </div>
@@ -187,7 +187,7 @@
       </div>
     </div>
     <div class="row r5 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r5c0">
         <img src='/images/cards/diamonds/9_of_diamonds.png'/>
       </div>
@@ -220,7 +220,7 @@
       </div>
     </div>
     <div class="row r6 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r6c0">
         <img src='/images/cards/diamonds/8_of_diamonds.png'/>
       </div>
@@ -253,7 +253,7 @@
       </div>
     </div>
     <div class="row r7 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r7c0">
         <img src='/images/cards/diamonds/7_of_diamonds.png'/>
       </div>
@@ -286,7 +286,7 @@
       </div>
     </div>
     <div class="row r8 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r8c0">
         <img src='/images/cards/diamonds/6_of_diamonds.png'/>
       </div>
@@ -319,7 +319,7 @@
       </div>
     </div>
     <div class="row r9 cardsRow">
-      <div class="col l1 cardColumn"></div>
+      <div class="col l1 b cardColumn"></div>
       <div class="col l1 c0 cardColumn" id="r9c0">
         <img src='/images/corner.png'/>
       </div>
@@ -353,9 +353,31 @@
     </div>
   </div>
   <div class="rightSide col l6">
-  <div class="row"><div id="playerHand">
+  <div class="row"><div id="playerHand" class="<%=playerColor %>">
   </div></div>
-  <div class="row"><div id="yourTurn"></div></div>
+  <div class="row" id="turnInfo"></div>
+  <div class="row" id="scoreTable">
+  <table class="col l8">
+    <thead>
+          <tr>
+              <th data-field="name">Name</th>
+              <th data-field="color">Color</th>
+              <th data-field="score">Score</th>
+          </tr>
+    </thead>
+    <tbody>
+    <% var keys = Object.keys(players);
+      for (var i = 0 ; i < keys.length; i++){ %>
+      <tr>
+        <td> <%= players[keys[i]].name %></td>
+        <td><%= players[keys[i]].color %></td>
+        <td><%= players[keys[i]].score %></td>
+      </tr>
+      <% } %>
+        </tbody>
+  </table>
+    
+  </div>
   
   </div>
   

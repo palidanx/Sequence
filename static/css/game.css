@@ -1,6 +1,7 @@
 
 body{
-	background-color: #afbac5;
+	background-color: maroon;
+  color: bisque;
 }
 
 .cardsRow {
@@ -19,7 +20,17 @@ body{
 }
 
 #gameBoard {
-	margin-top:20px;
+  margin: 15px;
+  border: 2px solid white;
+  width: 600px;
+  background-color: darkslategray;
+}
+
+.row.r0{
+  padding-top: 20px;
+}
+.row.r9{
+  padding-bottom:10px;
 }
 
 .row {
@@ -44,4 +55,20 @@ body{
 
 .rightSide {
   margin-top: 20px;
+}
+
+.blue img {
+  border: 3px solid blue;
+} 
+.green img {
+  border: 3px solid green;
+} 
+.red img {
+  border: 3px solid red;
+} 
+#turnInfo{
+  font-size: xx-large;
+}
+.b {
+  width: 20px !important;
 }

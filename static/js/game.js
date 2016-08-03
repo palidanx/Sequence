@@ -497,10 +497,10 @@ function initializeTable(_playerHand, _playerColor, _board, _playerNum, _numPlay
 
 	if (playerKey == _currentTurn){
 		canMove = true;
-		$('#yourTurn').append('<div class="col">Your Turn</div>');
+		$('#turnInfo').append('<div class="col">Your Turn</div>');
 	}
 	else
-		$('#yourTurn').append('<div class="col">'+ _currentName +'\'s turn</div>');
+		$('#turnInfo').append('<div class="col">'+ _currentName +'\'s turn</div>');
 	if (canMove)
 		console.log("Your Turn");
 	board = _board.split(',');
