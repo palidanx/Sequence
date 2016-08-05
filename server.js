@@ -278,20 +278,25 @@ router.post("/:gameKey/madeLine/:playerKey", function(req, res){
 	var gameKey = req.params.gameKey;
 	var playerKey = req.params.playerKey;
 	var lineArray = req.body.lineArray;
-	firebaseGames.child(gameKey + '/game').on('value', function(snapshot){
+	console.log(lineArray);
+	firebaseGames.child(gameKey + '/game').once('value').then(function(snapshot){
+		console.log("Got data from firebase");
 		var data = snapshot.val();
 		var board = data.board;
+		var color = data.players[playerKey].color;
 		for (var i = 0 ; i < lineArray.length; i++){
-			board[lineArray[i][0]][lineArray[i][1]] += 'l';
+			board[lineArray[i][0]][lineArray[i][1]] = color + 'l';
 		}
-		var score = data.players.playerKey.score + 1;
-		firebaseGames.child(gameKey + "/game/players/" + playeKey + "/score").set(score);
+		var score = data.players[playerKey].score + 1;
+		console.log(score);
+		firebaseGames.child(gameKey + "/game/players/" + playerKey + "/score").set(score);
 		firebaseGames.child(gameKey + "/game/board").set(board);
 		res.send({
-			board: board
+			board: board,
+			score: score
 		});
 	});
-})
+});
 
 app.use('/', router);
 http.listen(port, function(){

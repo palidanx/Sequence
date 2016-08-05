@@ -1,4 +1,4 @@
-var playerHand, gameKey, playerKey, playerColor, playerNum, numPlayers;
+var playerHand, gameKey, playerKey, playerColor, playerNum, numPlayers, score;
 var gameSocket = io.connect('/game');
 var board;
 var playerHandUrls = [];
@@ -52,6 +52,17 @@ function renderBoard(board){
 				}
 			}
 		}
+}
+
+function convertBoardToOneDString(board){
+	var otboard = [];
+	for (var i = 0 ; i < 10 ; i++){
+		for (var j = 0 ; j < 10; j++){
+			otboard[10 * i + j]  = board[i][j];
+		}
+	}
+	console.log(otboard);
+	return otboard;
 }
 
 function renderHand(playerHand){
@@ -162,16 +173,17 @@ function convertBoardInto2DArray(board, playerColor){
 	console.log(tdboard);
 	return tdboard;
 }
+
 function renderLine(lineArray){
-	console.log(lineArray);
+	console.log("Rendering your line");
 	var url = 'http://localhost:8080/' + gameKey + '/madeLine/' + playerKey;
 	$.post(url, {
 		lineArray: lineArray
 	}, function(data){
 		board = data.board;
-		renderBoard(board);
+		score = data.score;
+		renderBoard(convertBoardToOneDString(board));
 	})
-
 }
 function makeUserChooseLine(lineArray){
 	var numPos = lineArray.length - 4;
@@ -187,6 +199,7 @@ function makeUserChooseLine(lineArray){
 }
 
 function checkAndRender(line){
+	console.log("Checking for lines");
 	if (line == null)
 		return null;
 	if (line[0] == 2){
@@ -195,6 +208,7 @@ function checkAndRender(line){
 		return 2;
 	}
 	if (line[2] == false){
+		console.log("made a line");
 		renderLine(line[1]);
 		score++;
 		return 1;
@@ -208,7 +222,6 @@ function checkAndRender(line){
 
 function checkForLines(board, _row, _col){
 	var tdboard = convertBoardInto2DArray(board);
-	var splicedBoard = [];
 	var row = parseInt(_row);
 	var col = parseInt(_col);
 	var r1 = Math.max(0, row - 4);
@@ -222,6 +235,8 @@ function checkForLines(board, _row, _col){
 	var vertical = checkVertical([r1,r2], [c1,c2], row, col, tdboard);
 	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
+
+	console.log(horizontal);
 
 	checkAndRender(horizontal);
 	checkAndRender(vertical);
@@ -264,19 +279,20 @@ function checkHorizontal(rArray, cArray, row, col, tdboard){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 2, lineArray;
+		return [2, lineArray];
 	}
 	else if (score == 5){
+		console.log("YOU MADE A LINE");
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, false;
+		return [1, lineArray, false];
 	}
 	else if (score > 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, true;
+		return [1, lineArray, true];
 	}
 }
 function checkVertical(rArray, cArray, row, col, board){
@@ -460,8 +476,8 @@ $("html").click(function(e){
 	if (currentPiece == "0"){
 		if (hasCard){
 			console.log("Playing card");
-			checkForLines(board, parseInt(row), parseInt(col));
 			playMove(row, col, cardNum, playerColor);
+			checkForLines(board, parseInt(row), parseInt(col));
 			return null;
 		}
 		else if(hasTEJ){
