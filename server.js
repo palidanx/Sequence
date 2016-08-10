@@ -171,15 +171,11 @@ router.post('/createLobby', function(req, res){
 router.post('/joinGame', function(req, res){
 	var playerName = req.body.playerName;
 	var gameKey = req.body.gameKey;
-	firebaseGames.child(gameKey + '/lobby/players').on('value').then(function(snapshot){
-		var data = snapshot.val();
-		var numPlayers = data.length;
-		var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
+	var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
 		res.send({
 			playerKey: playerKey,
 			gameKey: gameKey
 		});	
-	});
 })
 
 router.get("/initializeGame/:gameKey", function(req, res) {
