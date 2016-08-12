@@ -280,11 +280,12 @@ router.post("/:gameKey/madeLine/:playerKey", function(req, res){
 		var data = snapshot.val();
 		var board = data.board;
 		var color = data.players[playerKey].color;
+		console.log(color);
 		for (var i = 0 ; i < lineArray.length; i++){
 			board[lineArray[i][0]][lineArray[i][1]] = color + 'l';
 		}
 		var score = data.players[playerKey].score + 1;
-		console.log(score);
+		console.log(board);
 		firebaseGames.child(gameKey + "/game/players/" + playerKey + "/score").set(score);
 		firebaseGames.child(gameKey + "/game/board").set(board);
 		res.send({

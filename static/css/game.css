@@ -1,7 +1,7 @@
 
 body{
-	background-color: maroon;
-  color: bisque;
+	background-color: darkcyan;
+  color: floralwhite;
 }
 
 .cardsRow {
@@ -71,4 +71,13 @@ body{
 }
 .b {
   width: 20px !important;
+}
+
+@media only screen and (min-width: 993px)
+.row .col.l1 {
+  width: 9.33333%;
+}
+
+.cardsRow {
+  width: 655px;
 }

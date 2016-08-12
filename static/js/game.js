@@ -201,7 +201,7 @@ function makeUserChooseLine(lineArray){
 function checkAndRender(line){
 	console.log("Checking for lines");
 	if (line == null)
-		return null;
+		return 0;
 	if (line[0] == 2){
 		renderLine(line[1]);
 		score += 2;
@@ -238,14 +238,19 @@ function checkForLines(board, _row, _col){
 
 	console.log(horizontal);
 
-	checkAndRender(horizontal);
-	checkAndRender(vertical);
-	checkAndRender(ndiagonal);
-	checkAndRender(pdiagonal);
+	var numLines = 0;
+	numLines+=checkAndRender(horizontal);
+	numLines+=checkAndRender(vertical);
+	numLines+=checkAndRender(ndiagonal);
+	numLines+=checkAndRender(pdiagonal);
+
+	if (numLines == 0)
+		return false;
+	else
+		return true;
 }
 
 function checkHorizontal(rArray, cArray, row, col, tdboard){
-	console.log("Checking for horizontal lines");
 	console.log(tdboard)
 	var r1= rArray[0];
 	var r2 = rArray[1];
@@ -255,7 +260,7 @@ function checkHorizontal(rArray, cArray, row, col, tdboard){
 	var bscore = 0; fscore = 0;
 	var bArray = [], fArray = [];
 	for (var i = (col - 1); i >= c1; i--){
-		if (tdboard[row][i] == playerColor){
+		if (tdboard[row][i] == playerColor ){
 			bArray.push([row, i]);
 			bscore ++;
 		}
@@ -476,14 +481,14 @@ $("html").click(function(e){
 	if (currentPiece == "0"){
 		if (hasCard){
 			console.log("Playing card");
-			playMove(row, col, cardNum, playerColor);
-			checkForLines(board, parseInt(row), parseInt(col));
+			if (!checkForLines(board, parseInt(row), parseInt(col)))
+				playMove(row, col, cardNum, playerColor);
 			return null;
 		}
 		else if(hasTEJ){
 			console.log("Playing Two Eyed Jack");
-			cardNumTEJ;
-			playMove(row, col, cardNumTEJ, playerColor);
+			if (!checkForLines(board, parseInt(row), parseInt(col)))
+				playMove(row, col, cardNumTEJ, playerColor);
 			return null;
 		}
 		else{
