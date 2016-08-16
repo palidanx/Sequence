@@ -68,6 +68,19 @@ gameSocket.on('connection', function(socket){
 			data: "Your turn"
 		})
 	})
+
+	socket.on('Line Made', function(data){
+		console.log('- Made Line');
+		var gameKey = data.gameKey;
+		var playerName = data.playerName;
+		var board = data.board;
+		var score = data.score;
+		console.log('Telling everyone in '+ gameKey + '  about line');
+		gameSocket.emit('Line Made' + gameKey, {
+			board: board,
+			playerName: playerName
+		});
+	});
 });
 
 router.get('/:gameKey/game/:playerKey', function(req, res){

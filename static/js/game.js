@@ -3,55 +3,56 @@ var gameSocket = io.connect('/game');
 var board;
 var playerHandUrls = [];
 var sMap = {
-		"d": "diamonds",
-		"s": "spades",
-		"c": "clubs",
-		"h": "hearts"
-	};
-	var suiteMapping = {
-		"d": "_of_diamonds.png",
-		"s": "_of_spades.png",
-		"c": "_of_clubs.png",
-		"h": "_of_hearts.png"
-	};
-	var numberMapping = {
-		"K": "king",
-		"Q": "queen",
-		"A": "ace",
-		"J": "jack"
-	};
+	"d": "diamonds",
+	"s": "spades",
+	"c": "clubs",
+	"h": "hearts"
+};
+var suiteMapping = {
+	"d": "_of_diamonds.png",
+	"s": "_of_spades.png",
+	"c": "_of_clubs.png",
+	"h": "_of_hearts.png"
+};
+var numberMapping = {
+	"K": "king",
+	"Q": "queen",
+	"A": "ace",
+	"J": "jack"
+};
 var canMove = false;
 
-function renderBoard(board){
+function renderBoard(_board){
+	board = _board;
 	console.log(board);
 	for (var i = 0 ; i < 100; i++){
 		if (board[i]!=0){
-				var idString = "r" + Math.floor(i/10) + "c" + i%10;
-				switch(board[i]){
-					case "blue":
-						$("#" + idString + " img").css("border", "5px solid blue");
-						break;
-					case "green":
-						$("#" + idString + " img").css("border", "5px solid green");
-						break;
-					case "red": 
-						$("#" + idString + " img").css("border", "5px solid red");
-						break;
-					case "bluel":
-						$("#" + idString + " img").css({"border": "6px solid blue",
-														'opacity': '0.5'});
-						break;
-					case "greenl":
-						$("#" + idString + " img").css({"border": "6px solid green",
-														'opacity': '0.5'});
-						break;
-					case "redl": 
-						$("#" + idString + " img").css({"border": "6px solid red",
-														'opacity': '0.5'});
-						break;
-				}
+			var idString = "r" + Math.floor(i/10) + "c" + i%10;
+			switch(board[i]){
+				case "blue":
+				$("#" + idString + " img").css("border", "5px solid blue");
+				break;
+				case "green":
+				$("#" + idString + " img").css("border", "5px solid green");
+				break;
+				case "red": 
+				$("#" + idString + " img").css("border", "5px solid red");
+				break;
+				case "bluel":
+				$("#" + idString + " img").css({"border": "6px solid blue",
+					'opacity': '0.5'});
+				break;
+				case "greenl":
+				$("#" + idString + " img").css({"border": "6px solid green",
+					'opacity': '0.5'});
+				break;
+				case "redl": 
+				$("#" + idString + " img").css({"border": "6px solid red",
+					'opacity': '0.5'});
+				break;
 			}
 		}
+	}
 }
 
 function convertBoardToOneDString(board){
@@ -65,7 +66,8 @@ function convertBoardToOneDString(board){
 	return otboard;
 }
 
-function renderHand(playerHand){
+function renderHand(_playerHand){
+	playerHand = _playerHand;
 	$('#playerHand').empty();
 	for (var i = 0; i < playerHand.length; i++){
 		var cardString = playerHand[i];
@@ -120,12 +122,26 @@ $(document).ready(function(){
 		//console.log(board);
 		renderBoard(board);
 	})
-	var eventMessage = gameKey + ' Player Turn ' + playerNum;
+	var turnMessage = gameKey + ' Player Turn ' + playerNum;
 	gameSocket.on(eventMessage, function(data){
 		canMove = true;
 		console.log(data.data);
 	})
+	var lineMessage = 'Line Made' + gameKey;
+	gameSocket.on(lineMessage, function(data){
+		board = data.board;
+		var lineName = data.playerName;
+		var rows = $('#scoreTable table tr');
+		for ( var i = 0 ; i < rows.length ; i++){
+			var name = rows[i].find('.name').text();
+			if (name == lineName)
+				var rowScore = rows[i].find('.score');
+			var score = parseInt(rowScore.text()) + 1;
+			rowScore.text(score);
+		}
+	});
 });
+
 function OEJinHand(_hand){
 	var hand = _hand;
 	for (var i = 0 ; i < playerHand.length; i++){
@@ -236,7 +252,7 @@ function checkForLines(board, _row, _col){
 	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
 
-	console.log(horizontal);
+	console.log(ndiagonal);
 
 	var numLines = 0;
 	numLines+=checkAndRender(horizontal);
@@ -246,8 +262,15 @@ function checkForLines(board, _row, _col){
 
 	if (numLines == 0)
 		return false;
-	else
+	else{
+		gameSocket.emit('Line Made', {
+			gameKey : gameKey,
+			playerName: playerName,
+			board: board,
+			score: score
+		});  
 		return true;
+	}
 }
 
 function checkHorizontal(rArray, cArray, row, col, tdboard){
@@ -323,24 +346,25 @@ function checkVertical(rArray, cArray, row, col, board){
 		else
 			break;
 	}
+	console.log(' VERT bscore: ' + bscore + ', fscore: '+ fscore);
 	var score = fscore + bscore + 1;
 	if (score == 9){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 2, lineArray;
+		return [2, lineArray];
 	}
 	else if (score == 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, false;
+		return [1, lineArray, false];
 	}
 	else if (score > 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, true;
+		return [1, lineArray, true];
 	}
 	return null;
 }
@@ -371,24 +395,26 @@ function checkNDiagonal(rArray, cArray, row, col, board){
 		else
 			break;
 	}	
+	console.log(' NDIAG bscore: ' + bscore + ', fscore: '+ fscore);
 	var score = fscore + bscore + 1;
 	if (score == 9){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 2, lineArray;
+		return [2, lineArray];
 	}
 	else if (score == 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, false;
+		console.log("YOU MADE A LINE");
+		return [1, lineArray, false];
 	}
 	else if (score > 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, true;
+		return [1, lineArray, true];
 	}
 	return null;
 }
@@ -424,19 +450,19 @@ function checkPDiagonal(rArray, cArray, row, col, board){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 2, lineArray;
+		return [2, lineArray];
 	}
 	else if (score == 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, false;
+		return [1, lineArray, false];
 	}
 	else if (score > 5){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
-		return 1, lineArray, true;
+		return [1, lineArray, true];
 	}
 	return null;
 }
@@ -527,9 +553,9 @@ function initializeTable(_playerHand, _playerColor, _board, _playerNum, _numPlay
 	board = _board.split(',');
 	console.log(board);
 	playerColor = _playerColor;
- 	playerHand = _playerHand.split(',');
+	playerHand = _playerHand.split(',');
  	//convertBoardInto2DArray(board, playerColor);
-	var imageUrls = [];
-	renderBoard(board);
-	renderHand(playerHand);
-}
+ 	var imageUrls = [];
+ 	renderBoard(board);
+ 	renderHand(playerHand);
+ }

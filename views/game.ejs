@@ -48,7 +48,7 @@
         <img src='/images/cards/clubs/7_of_clubs.png'/>
       </div>
       <div class="col l1 c8 cardColumn" id="r0c8" >
-        <img src='/images/cards/clubs/8_of_clubs.png'/>
+        <img src='/images/cards/clubs/6_of_clubs.png'/>
       </div>
       <div class="col l1 c9 cardColumn" id="r0c9">
         <img src='/images/corner.png'/>
@@ -362,7 +362,7 @@
       <div class="col l1 c7 cardColumn" id="r9c7">
         <img src='/images/cards/spades/queen_of_spades.png'/>
       </div>
-      <div class="col l1 c8 cardColumn" id="r9c9">
+      <div class="col l1 c8 cardColumn" id="r9c8">
         <img src='/images/cards/spades/10_of_spades.png'/>
       </div>
       <div class="col l1 c9 cardColumn" id="r9c9">
@@ -389,9 +389,9 @@
     <% var keys = Object.keys(players);
       for (var i = 0 ; i < keys.length; i++){ %>
       <tr>
-        <td> <%= players[keys[i]].name %></td>
-        <td><%= players[keys[i]].color %></td>
-        <td><%= players[keys[i]].score %></td>
+        <td class="name"> <%= players[keys[i]].name %></td>
+        <td class="color"><%= players[keys[i]].color %></td>
+        <td class="score"><%= players[keys[i]].score %></td>
       </tr>
       <% } %>
         </tbody>
