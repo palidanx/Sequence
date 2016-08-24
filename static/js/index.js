@@ -1,6 +1,12 @@
 var lobbySocket = io.connect('/lobby');
 var gameKey;
 
+function loadNewGameMenu(){
+	$('#gameOptionsCol').load('/templates/newGame.html', function(data){
+		
+	})
+}
+
 function newGame(){
 	console.log("Creating Lobby");
 	var body = document.getElementsByTagName("BODY")[0];

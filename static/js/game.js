@@ -1,25 +1,25 @@
-var playerHand, gameKey, playerKey, playerColor, playerNum, numPlayers, score;
+var playerHand, playerName, gameKey, playerKey, playerColor, playerNum, numPlayers, score;
 var gameSocket = io.connect('/game');
 var board;
 var playerHandUrls = [];
 var sMap = {
-	"d": "diamonds",
-	"s": "spades",
-	"c": "clubs",
-	"h": "hearts"
-};
+		"d": "diamonds",
+		"s": "spades",
+		"c": "clubs",
+		"h": "hearts"
+	};
 var suiteMapping = {
-	"d": "_of_diamonds.png",
-	"s": "_of_spades.png",
-	"c": "_of_clubs.png",
-	"h": "_of_hearts.png"
-};
+		"d": "_of_diamonds.png",
+		"s": "_of_spades.png",
+		"c": "_of_clubs.png",
+		"h": "_of_hearts.png"
+	};
 var numberMapping = {
-	"K": "king",
-	"Q": "queen",
-	"A": "ace",
-	"J": "jack"
-};
+		"K": "king",
+		"Q": "queen",
+		"A": "ace",
+		"J": "jack"
+	};
 var canMove = false;
 
 function renderBoard(_board){
@@ -27,32 +27,32 @@ function renderBoard(_board){
 	console.log(board);
 	for (var i = 0 ; i < 100; i++){
 		if (board[i]!=0){
-			var idString = "r" + Math.floor(i/10) + "c" + i%10;
-			switch(board[i]){
-				case "blue":
-				$("#" + idString + " img").css("border", "5px solid blue");
-				break;
-				case "green":
-				$("#" + idString + " img").css("border", "5px solid green");
-				break;
-				case "red": 
-				$("#" + idString + " img").css("border", "5px solid red");
-				break;
-				case "bluel":
-				$("#" + idString + " img").css({"border": "6px solid blue",
-					'opacity': '0.5'});
-				break;
-				case "greenl":
-				$("#" + idString + " img").css({"border": "6px solid green",
-					'opacity': '0.5'});
-				break;
-				case "redl": 
-				$("#" + idString + " img").css({"border": "6px solid red",
-					'opacity': '0.5'});
-				break;
+				var idString = "r" + Math.floor(i/10) + "c" + i%10;
+				switch(board[i]){
+					case "blue":
+						$("#" + idString + " img").css("border", "5px solid blue");
+						break;
+					case "green":
+						$("#" + idString + " img").css("border", "5px solid green");
+						break;
+					case "red": 
+						$("#" + idString + " img").css("border", "5px solid red");
+						break;
+					case "bluel":
+						$("#" + idString + " img").css({"border": "6px solid blue",
+														'opacity': '0.5'});
+						break;
+					case "greenl":
+						$("#" + idString + " img").css({"border": "6px solid green",
+														'opacity': '0.5'});
+						break;
+					case "redl": 
+						$("#" + idString + " img").css({"border": "6px solid red",
+														'opacity': '0.5'});
+						break;
+				}
 			}
 		}
-	}
 }
 
 function convertBoardToOneDString(board){
@@ -113,6 +113,15 @@ function playMove(row, col, cardNum, _playerColor){
 }
 
 $(document).ready(function(){
+	var rows = $('#scoreTable table tr');
+
+	for (var i = 0 ; i < rows.length ; i++){
+		var color = rows[i].find(".color").text();
+		if (playerColor == color){
+			playerName = rows[i].find('.name').text();
+			break;
+		}
+	}
 	var urlParams = window.location.href.split('/');
 	gameKey = urlParams[3];
 	playerKey = urlParams[5];
@@ -123,25 +132,23 @@ $(document).ready(function(){
 		renderBoard(board);
 	})
 	var turnMessage = gameKey + ' Player Turn ' + playerNum;
-	gameSocket.on(eventMessage, function(data){
+	gameSocket.on(turnMessage, function(data){
 		canMove = true;
 		console.log(data.data);
 	})
-	var lineMessage = 'Line Made' + gameKey;
+	var lineMessage = 'Line Made ' + gameKey;
 	gameSocket.on(lineMessage, function(data){
 		board = data.board;
 		var lineName = data.playerName;
-		var rows = $('#scoreTable table tr');
 		for ( var i = 0 ; i < rows.length ; i++){
 			var name = rows[i].find('.name').text();
 			if (name == lineName)
 				var rowScore = rows[i].find('.score');
-			var score = parseInt(rowScore.text()) + 1;
-			rowScore.text(score);
+				var score = parseInt(rowScore.text()) + 1;
+				rowScore.text(score);
 		}
-	});
-});
-
+		})
+	})
 function OEJinHand(_hand){
 	var hand = _hand;
 	for (var i = 0 ; i < playerHand.length; i++){
@@ -553,9 +560,9 @@ function initializeTable(_playerHand, _playerColor, _board, _playerNum, _numPlay
 	board = _board.split(',');
 	console.log(board);
 	playerColor = _playerColor;
-	playerHand = _playerHand.split(',');
+ 	playerHand = _playerHand.split(',');
  	//convertBoardInto2DArray(board, playerColor);
- 	var imageUrls = [];
- 	renderBoard(board);
- 	renderHand(playerHand);
- }
+	var imageUrls = [];
+	renderBoard(board);
+	renderHand(playerHand);
+}

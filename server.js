@@ -75,8 +75,8 @@ gameSocket.on('connection', function(socket){
 		var playerName = data.playerName;
 		var board = data.board;
 		var score = data.score;
-		console.log('Telling everyone in '+ gameKey + '  about line');
-		gameSocket.emit('Line Made' + gameKey, {
+		console.log('Telling everyone in ' + gameKey + ' about line');
+		gameSocket.emit('Line Made ' + gameKey, {
 			board: board,
 			playerName: playerName
 		});
@@ -111,6 +111,7 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 });
 
 router.get('/', function(req, res){
+	
 	res.render('index');
 });
 

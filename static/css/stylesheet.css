@@ -1,17 +1,63 @@
 body {
-	background-color: white;
+	background-image:url("../images/woodBackground.jpg");
 	font-family: 'Montserrat', sans-serif;
+	color:white;
+}
+html {
+	font-size: 20px !important;
 }
 
 #title {
-    font-size: -webkit-xxx-large;
-    color: white;
-    -webkit-text-stroke-width: 2px;
+    font-size: 100px;
+    padding-left: 28%;
+    padding-top: 30px;
+    -webkit-text-stroke-width: 0px;
     -webkit-text-stroke-color: black;
+    color: white;
+}
+#gameOptionsCol {
+	background-color: rgba(0, 0, 0, 0.6);
+	position: fixed;
+	top:30%;
+	left:35%;
+	padding-top:20px;
+	padding-bottom: 35px;
+	padding-right: 35px;
+}
+.gameOptionBtn {
+	display: block !important;
+	margin-left:20px;
 }
 
-.gameOptionBtn{
-	margin-top: 10px;
+#gameOptions{
+	font-size: x-large;
+	margin-left:20px;
+	margin-top:20px;
+	margin-bottom: 10px;
 }
+
+.input-field input[type=text]:focus {
+     border-bottom: 1px solid #fff !important;
+     box-shadow: 0 1px 0 0 #000 !important;
+   }
+
+   .input-field label {
+     color: #ddd !important;
+   }
+
+label {
+	color: white !important;
+}
+
+#numPlayerSelection {
+	padding-top:10px;
+}
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:after{
+	background-color: white !important;
+}
+[type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
+	border: none !important;
+}
+   
 /* app css stylesheet */
 
