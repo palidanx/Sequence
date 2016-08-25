@@ -111,7 +111,7 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 });
 
 router.get('/', function(req, res){
-	
+
 	res.render('index');
 });
 
@@ -173,11 +173,20 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 
 router.post('/createLobby', function(req, res){
 	var playerName = req.body.playerName;
+	var gameName = req.body.gameName;
+	var gameType = req.body.gameType;
+	var numPlayers = req.body.numPlayers;
 	var gameKey = firebaseGames.push().key;
+	firebaseGames.child(gameKey+'/lobby/gameType/').set(gameType);
+	firebaseGames.child(gameKey+'/lobby/numPlayers/').set(numPlayers);
+	firebaseGames.child(gameKey+'/lobby/gameName/').set(gameName);
 	firebaseGames.child(gameKey+'/lobby/gameOwner/').set(playerName);
 	var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
 	res.send({
 		playerKey: playerKey,
+		gameName: gameName,
+		numPlayers: numPlayers,
+		gameType: gameType,
 		gameKey: gameKey
 	})
 });

@@ -12,7 +12,7 @@ $(document).ready(function(){
 
 	lobbySocket.on('Player Added ' + gameKey, function(data){
 		console.log(data.playerName);
-		$('#playerList').append('<li class="collection-item">' + data.playerName + '</li>');
+		$('#lobbyTable tr:last').append('<tr><td>'+ data.playerName + '</td><td>Blue</td></tr>');
 	});
 
 	lobbySocket.on('Game Started ' + gameKey, function(data){

@@ -90,6 +90,7 @@ function playMove(row, col, cardNum, _playerColor){
 	$.get(url2, function(data){
 		console.log("Telling the Socket the player moved");
 		board[parseInt(row) * 10 + parseInt(col)] = _playerColor;
+		renderBoard(board);
 		gameSocket.emit('Player Moved', {
 			playerNum: playerNum,
 			gameKey: gameKey,
@@ -107,7 +108,6 @@ function playMove(row, col, cardNum, _playerColor){
 		col: col,
 		removeCard: removeCard
 	}, function(data){
-		//console.log(data);
 	}, 'json')
 	canMove = false;
 }
@@ -503,14 +503,12 @@ $("html").click(function(e){
 
 	var hasOEJ = OEJinHand(playerHand);
 	var cardNumOEJ = OEJinHand(playerHand)[1];
-	var cardNumTEJ = TEJinHand(playerHand)[1];
 	var hasTEJ = TEJinHand(playerHand)[0];
-	
+	var cardNumTEJ = TEJinHand(playerHand)[1];
 
 	var hasCard = cardInHand(card, playerHandUrls)[0];
 	var cardNum = cardInHand(card, playerHandUrls)[1];
 
-	console.log(hasCard + " " + hasTEJ);
 	if (currentPiece == "0"){
 		if (hasCard){
 			console.log("Playing card");
