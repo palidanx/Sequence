@@ -58,6 +58,14 @@ label {
 [type="radio"]:checked+label:after, [type="radio"].with-gap:checked+label:before, [type="radio"].with-gap:checked+label:after{
 	border: none !important;
 }
+
+#numPlayerSelection p{
+	margin-left:50px;
+}
+
+#startGame {
+	margin-left:30px;
+}
    
 /* app css stylesheet */
 
