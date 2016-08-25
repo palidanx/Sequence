@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Home Page</title>
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
   <link rel="stylesheet" href="/css/stylesheet.css" type="text/css">
   <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
   <!-- Compiled and minified CSS -->
@@ -16,23 +16,34 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
   <script></script>
   
-  </head>
-  <body >
-   <nav>
-    <div class="nav-wrapper teal">
-      <a href="#" class="brand-logo">Sequence</a>
+</head>
+<body >
+ <div class="row">
+  <div id="title">SEQUENCE</div>
+  <div class="col l3" id="gameOptionsCol">
+    <div id="lobbyHeader">
+      Lobby
+      </div>
+      <table id="lobbyTable">
+        <thead>
+          <tr>
+            <th data-field="name">Name</th>
+            <th data-field="color">Color</th>
+          </tr>
+        </thead>
+        <% for(var key in players) { %>
+          <tr>
+            <td><%= players[key] %></td>
+            <td>Blue</td>
+          </tr>
+        <% } %>
+
+        <tbody>
+          
+        </tbody>
+      </table>
+       <a class="waves-effect transparent btn" id="startGame" onclick="startGame()" >Start Game</a>
     </div>
-  </nav>
-  <div class=" col l3">
-    <div class="row">Game created by <%= owner %> </div>  
-    <ul class="collection" id="playerList">
-      <% for(var key in players) { %>
-      <li class="collection-item"> <%= players[key] %> </li>
-      <% } %>
-    </ul>
-    <% if(players[playerKey] == owner) { %>
-      <a class="waves-effect waves-light btn" href="javascript: startGame();">Start Game</a>
-      <% } %>
   </div>
   </body>
-</html>
+  </html>
