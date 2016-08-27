@@ -1,6 +1,6 @@
 
 body{
-	background-color: darkcyan;
+background-image:url("../images/woodBackground.jpg");
   color: floralwhite;
 }
 
@@ -23,7 +23,7 @@ body{
   margin: 15px;
   border: 2px solid white;
   width: 600px;
-  background-color: darkslategray;
+  background-color: rgba(0,0,0,0.6);
 }
 
 .row.r0{

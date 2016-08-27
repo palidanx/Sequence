@@ -17,6 +17,7 @@ var config = {
 firebase.initializeApp(config);
 var db = firebase.database();
 var firebaseGames = db.ref().child('games/');
+var firebaseGameCodes = db.ref().child('gameCodes/');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -111,7 +112,7 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 });
 
 router.get('/', function(req, res){
-	
+
 	res.render('index');
 });
 
@@ -173,12 +174,35 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 
 router.post('/createLobby', function(req, res){
 	var playerName = req.body.playerName;
+	var gameName = req.body.gameName;
+	var gameType = req.body.gameType;
+	var numPlayers = req.body.numPlayers;
 	var gameKey = firebaseGames.push().key;
-	firebaseGames.child(gameKey+'/lobby/gameOwner/').set(playerName);
+	var gameCode;
+	firebaseGameCodes.once('value').then(function(snapshot){
+		var data = snapshot.val();
+		gameCode = Math.floor(1000 + Math.random() * 9000);
+		var numGames = data.length;
+		while(data.indexOf(gameCode)!=-1){
+			gameCode = Math.floor(1000 + Math.random() * 9000);
+		}
+		firebaseGameCodes.child('/' + numGames).set(gameCode);
+	})
+	firebaseGames.child(gameKey+'/lobbdy').set({
+		gameType: gameType,
+		numPlayers: numPlayers,
+		gameName: gameName,
+		gameOwner: gameOwner, 
+		gameCode: gameCode
+	})
 	var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
 	res.send({
 		playerKey: playerKey,
-		gameKey: gameKey
+		gameName: gameName,
+		numPlayers: numPlayers,
+		gameType: gameType,
+		gameKey: gameKey,
+		gameCode: gameCode
 	})
 });
 
