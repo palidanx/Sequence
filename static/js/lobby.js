@@ -7,7 +7,6 @@ $(document).ready(function(){
 	var urlParams = window.location.href.split('/');
 	gameKey = urlParams[3];
 	playerKey = urlParams[5];
-	baseUrl = 'http://localhost:8080/';
 
 
 	lobbySocket.on('Player Added ' + gameKey, function(data){
@@ -17,13 +16,13 @@ $(document).ready(function(){
 
 	lobbySocket.on('Game Started ' + gameKey, function(data){
 		console.log(data.message);
-		document.location.href = baseUrl + gameKey + '/game/' + playerKey;
+		document.location.href = "/" + gameKey + '/game/' + playerKey;
 	})
 });
 
 function startGame() {
-	$.get(baseUrl + 'initializeGame/' + gameKey, {}, function(data){
-		document.location.href = baseUrl + gameKey + '/game/' + playerKey;
+	$.get('/initializeGame/' + gameKey, {}, function(data){
+		document.location.href = "/" + gameKey + '/game/' + playerKey;
 		lobbySocket.emit('Game Started', {
 			gameKey: gameKey
 		})

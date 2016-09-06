@@ -2,9 +2,26 @@ var lobbySocket = io.connect('/lobby');
 var gameKey;
 
 function loadNewGameMenu(){
-	$('#gameOptionsCol').load('/templates/newGame.html', function(data){
-		
-	})
+	$('#gameOptionsCol').load('/templates/newGame.html', function(){});
+}
+function loadJoinGameMenu(){
+	$('#gameOptionsCol').load('/templates/joinGame.html', function(){
+		var url = '/allGames';
+		$.get(url, function(data){
+			console.log(data);
+			var numGames = data.length;
+			for (var i = 0 ; i < numGames ; i++){
+				var rowHTML = "<tr>";
+				var nameHTML = "<td>" + data[i].gameName + "</td>";
+				var numPlayersHTML = "<td>" + data[i].numPlayers + "</td>";
+				var gameCodeHTML = "<td>" + data[i].gameCode + "</td>";
+				var joinGameHTML = "<td><a onclick=joinGame("+ data[i].gameCode + ") >Join</a></td>";
+				rowHTML += (nameHTML + numPlayersHTML + gameCodeHTML + joinGameHTML + "</tr>");
+				console.log(rowHTML);
+				$('#gamesBody').append(rowHTML);
+			} 
+		})
+	});
 }
 
 function newGame(){
@@ -39,7 +56,25 @@ function newGame(){
 	}, 'json')
 };
 
-function joinGame(){
+function joinGame(_gameCode){
+	var gameCode = _gameCode 
+	if (gameCode == null){
+		gameCode = $('#gameCode').val();
+	}
+	console.log(gameCode);
+	var url = '/joinGame';
+	var playerName = $('#playerName').val();
+	$.post(url, {
+		gameCode: gameCode,
+		playerName: playerName
+	}, function(data){
+		var gameKey = data.gameKey;
+		var playerKey = data.playerKey;
+		lobbySocket.emit('Joined Lobby', {gameKey: gameKey, playerName: playerName});
+		document.location.href = "/" + gameKey + '/lobby/' + playerKey;
+	}, 'json')
+}
+/*function joinGame(){
 	console.log("Joining Game");
 	gameKey = document.getElementById('gameKey').value;
 	var playerName = document.getElementById('playerName_2').value;
@@ -54,4 +89,4 @@ function joinGame(){
 		lobbySocket.emit('Joined Lobby', {gameKey: gameKey, playerName: playerName});
 		document.location.href = baseUrl + gameKey + '/lobby/' + playerKey;
 	}, 'json')
-};
+};*/

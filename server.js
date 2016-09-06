@@ -12,12 +12,13 @@ const port=8080;
 
 var firebase = require("firebase");
 var config = {
-    databaseURL: 'https://sequence-3ca77.firebaseio.com/'
-  };
+	databaseURL: 'https://sequence-3ca77.firebaseio.com/'
+};
 firebase.initializeApp(config);
 var db = firebase.database();
 var firebaseGames = db.ref().child('games/');
 var firebaseGameCodes = db.ref().child('gameCodes/');
+var firebaseLobbies = db.ref().child('lobbies/')
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -31,22 +32,22 @@ var gameSocket = io.of('/game');
 
 lobbySocket.on('connection', function(socket){
 	console.log('User Connected to Lobby');
-		socket.on('Created Lobby', function(data){
-			console.log("- Creating Lobby");
-		})
-		socket.on('Joined Lobby', function(data, err){
-			console.log("- Joined Lobby");
-			lobbySocket.emit('Player Added '+ data.gameKey, {
-				playerName: data.playerName
-			});
-		})
-		socket.on('Game Started', function(data, err){
-			var gameKey = data.gameKey;
-			console.log('Started Game');
-			lobbySocket.emit('Game Started ' + gameKey, {
-				message: 'Game Started by owner'
-			});
-		})
+	socket.on('Created Lobby', function(data){
+		console.log("- Creating Lobby");
+	})
+	socket.on('Joined Lobby', function(data, err){
+		console.log("- Joined Lobby");
+		lobbySocket.emit('Player Added '+ data.gameKey, {
+			playerName: data.playerName
+		});
+	})
+	socket.on('Game Started', function(data, err){
+		var gameKey = data.gameKey;
+		console.log('Started Game');
+		lobbySocket.emit('Game Started ' + gameKey, {
+			message: 'Game Started by owner'
+		});
+	})
 });
 
 gameSocket.on('connection', function(socket){
@@ -88,7 +89,7 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 	console.log("Getting Player Game");
 	var gameKey = req.params.gameKey;
 	var playerKey = req.params.playerKey;
-	firebaseGames.child(gameKey+'/game').once('value').then(function(snapshot){
+	firebaseGames.child(gameKey).once('value').then(function(snapshot){
 		var data = snapshot.val();
 		var board = data.board;
 		var player = data.players[playerKey];
@@ -111,21 +112,41 @@ router.get('/:gameKey/game/:playerKey', function(req, res){
 	})
 });
 
-router.get('/', function(req, res){
+router.get('/allGames', function(req, res){
+	console.log("Getting all games...");
+	var returnArray = [];
+	firebaseLobbies.once('value').then(function(snapshot){
+		var data = snapshot.val();
+		var gameKeys = Object.keys(data);
+		var numGames = gameKeys.length;
+		for (var i = 0 ; i < numGames ; i++){
+			var game = data[gameKeys[i]];
+			if (game['gameType'] == 'PUBLIC' && game['gameStarted'] == false){
+				returnArray.push(game);
+			}
+		}
+		res.send(returnArray);
+	});
+});
 
+router.get('/', function(req, res){
+	console.log("Getting Home Page..");
 	res.render('index');
 });
 
 router.get('/:gameKey/lobby/:playerKey', function(req,res){
+	console.log("Entering lobby...")
 	var gameKey = req.params.gameKey;
 	var playerKey = req.params.playerKey;
 	var playerName;
-	firebaseGames.child(gameKey + '/lobby/').once('value').then(function(snapshot){
+	firebaseLobbies.child(gameKey).once('value').then(function(snapshot){
 		var ownerName = snapshot.val().gameOwner;
 		var players = snapshot.val().players;
+		var gameCode = snapshot.val().gameCode;
 		res.render('lobby', {
 			owner: ownerName,
 			players: players,
+			gameCode: gameCode,
 			playerKey: playerKey
 		});
 	})
@@ -134,6 +155,7 @@ router.get('/:gameKey/lobby/:playerKey', function(req,res){
 router.get('/getPlayerHand/:gameKey/:playerId', function(req, res){
 	var playerId = req.params.playerId;
 	var gameKey = req.params.gameKey;
+	console.log("Getting player hand for " + playerId + " in game " + gameKey + "...");
 	var hand;
 	firebaseGames.child(gameKey + '/players/' + playerId + '/hand').once('value').then(function(snapshot){
 		hand = snapshot.val();
@@ -143,6 +165,7 @@ router.get('/getPlayerHand/:gameKey/:playerId', function(req, res){
 
 router.get('/getBoard/:gameKey', function(req, res){
 	var gameKey = req.params.gameKey;
+	console.log("Getting board for game " + gameKey + "...");
 	var board;
 	firebaseGames.child(gameKey).once('value').then(function(snapshot){
 		board = snapshot.val().board;
@@ -156,7 +179,7 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 	var cardNum = req.params.cardNum;
 	var hand;
 	var remainingDeck;
-
+	console.log("Playing card for " + playerId + " in game " + gameKey + "...");
 	firebaseGames.child(gameKey + '/game').once('value').then(function(snapshot){
 		//console.log(snapshot.val());
 		data = snapshot.val();
@@ -172,56 +195,96 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 	});
 });
 
+function codeExists(array, code){
+	for (var i = 0 ; i < array.length; i++){
+		if (code == array[i]){
+			return true;
+		}
+	}
+	return false;
+}
+
 router.post('/createLobby', function(req, res){
 	var playerName = req.body.playerName;
 	var gameName = req.body.gameName;
 	var gameType = req.body.gameType;
 	var numPlayers = req.body.numPlayers;
-	var gameKey = firebaseGames.push().key;
+	var gameKey = firebaseLobbies.push().key;
+	console.log("---------------------------------------");
+	console.log("Creating Lobby for game " + gameKey + "...");
+	console.log("Game Name: " + gameName);
+	console.log("Game Type: " + gameType);
+	console.log("Number of Players: " + numPlayers);
+
 	var gameCode;
 	firebaseGameCodes.once('value').then(function(snapshot){
 		var data = snapshot.val();
+		var gameCodes = Object.keys(data);
 		gameCode = Math.floor(1000 + Math.random() * 9000);
-		var numGames = data.length;
-		while(data.indexOf(gameCode)!=-1){
+		while(codeExists(gameCodes, gameCode)){
 			gameCode = Math.floor(1000 + Math.random() * 9000);
 		}
-		firebaseGameCodes.child('/' + numGames).set(gameCode);
+		console.log("Game Code: " + gameCode);
+		
+		firebaseGameCodes.child('/' + gameCode).set(gameKey);
+		firebaseLobbies.child(gameKey).set({
+			gameType: gameType,
+			numPlayers: numPlayers,
+			gameName: gameName,
+			gameOwner: playerName, 
+			gameCode: gameCode,
+			gameStarted: false
+		})
+		var playerKey = firebaseLobbies.child(gameKey+'/players').push(playerName).key;
+		console.log("Owner name: " + playerName);
+		console.log("Owner Key: " + playerKey);
+		console.log("---------------------------------------");
+		res.send({
+			playerKey: playerKey,
+			gameName: gameName,
+			numPlayers: numPlayers,
+			gameType: gameType,
+			gameKey: gameKey,
+			gameCode: gameCode
+		})
 	})
-	firebaseGames.child(gameKey+'/lobbdy').set({
-		gameType: gameType,
-		numPlayers: numPlayers,
-		gameName: gameName,
-		gameOwner: gameOwner, 
-		gameCode: gameCode
-	})
-	var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
-	res.send({
-		playerKey: playerKey,
-		gameName: gameName,
-		numPlayers: numPlayers,
-		gameType: gameType,
-		gameKey: gameKey,
-		gameCode: gameCode
-	})
+	
 });
 
 router.post('/joinGame', function(req, res){
 	var playerName = req.body.playerName;
-	var gameKey = req.body.gameKey;
-	var playerKey = firebaseGames.child(gameKey+'/lobby/players').push(playerName).key;
+	var gameCode = req.body.gameCode;
+	var gameKey;
+	firebaseGameCodes.once('value').then(function(snapshot){
+		var data = snapshot.val();
+		gameKey = data[gameCode];
+		if (gameKey == null){
+			res.send("404");
+		}
+		firebaseLobbies.child(gameKey).once('value').then(function(snapshot){
+			var data = snapshot.val();
+			var maxPlayers = data.numPlayers;
+			var numPlayers = (Object.keys(data.players)).length;
+			if (maxPlayers == numPlayers){
+				res.send("Game Full");
+			}
+		})
+		var playerKey = firebaseLobbies.child(gameKey+'/players').push(playerName).key;
 		res.send({
 			playerKey: playerKey,
 			gameKey: gameKey
 		});	
+	})
 })
+
+
 
 router.get("/initializeGame/:gameKey", function(req, res) {
 
 	var gameKey = req.params.gameKey;
 	var numPlayers, remainingDeck, board, firebasePlayers;
 
-	firebaseGames.child(gameKey + '/lobby').once('value').then(function(snapshot){
+	firebaseLobbies.child(gameKey).once('value').then(function(snapshot){
 		console.log('getting fb data');
 		var data = snapshot.val();
 		firebasePlayers = data.players;
@@ -252,14 +315,15 @@ router.get("/initializeGame/:gameKey", function(req, res) {
 			}
 			firebasePlayers[keysIndex[i]] = fbplayer;
 		}
-		firebaseGames.child(gameKey +'/game').set({
-		currentTurn: keysIndex[0],
-		numPlayers : numPlayers,
-		players : firebasePlayers,
-		board: board,
-		remainingDeck: remainingDeck
-	})
-	res.send(gameKey);
+		firebaseLobbies.child(gameKey + "/gameStarted").set(true);
+		firebaseGames.child(gameKey).set({
+			currentTurn: keysIndex[0],
+			numPlayers : numPlayers,
+			players : firebasePlayers,
+			board: board,
+			remainingDeck: remainingDeck
+		})
+		res.send(gameKey);
 	});
 });
 

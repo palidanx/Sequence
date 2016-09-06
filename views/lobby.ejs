@@ -21,20 +21,24 @@
  <div class="row">
   <div id="title">SEQUENCE</div>
   <div class="col l3" id="gameOptionsCol">
-    <div id="lobbyHeader">
+    <div id="lobbyHeader" class="center">
       Lobby
+      </div>
+      <div class="row"> Game Code: 
+        <%= gameCode %>
+      </div>
+      <div class="row"> Created By: 
+        <%= owner %>
       </div>
       <table id="lobbyTable">
         <thead>
           <tr>
-            <th data-field="name">Name</th>
-            <th data-field="color">Color</th>
+            <th data-field="name">Players</th>
           </tr>
         </thead>
         <% for(var key in players) { %>
           <tr>
             <td><%= players[key] %></td>
-            <td>Blue</td>
           </tr>
         <% } %>
 
