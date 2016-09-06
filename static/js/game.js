@@ -85,8 +85,8 @@ function renderHand(_playerHand){
 }
 
 function playMove(row, col, cardNum, _playerColor){
-	var url = 'http://localhost:8080/'+gameKey+'/playPiece/' + playerKey;
-	var url2 = 'http://localhost:8080/'+gameKey+'/playCard/' + playerKey + '/' + cardNum;
+	var url = '/'+gameKey+'/playPiece/' + playerKey;
+	var url2 = '/'+gameKey+'/playCard/' + playerKey + '/' + cardNum;
 	$.get(url2, function(data){
 		console.log("Telling the Socket the player moved");
 		board[parseInt(row) * 10 + parseInt(col)] = _playerColor;
@@ -199,7 +199,7 @@ function convertBoardInto2DArray(board, playerColor){
 
 function renderLine(lineArray){
 	console.log("Rendering your line");
-	var url = 'http://localhost:8080/' + gameKey + '/madeLine/' + playerKey;
+	var url = '/' + gameKey + '/madeLine/' + playerKey;
 	$.post(url, {
 		lineArray: lineArray
 	}, function(data){

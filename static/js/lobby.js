@@ -1,5 +1,5 @@
 var lobbySocket = io.connect('/lobby');
-var gameKey, playerKey, baseUrl;
+var gameKey, playerKey;
 
 
 
@@ -7,7 +7,6 @@ $(document).ready(function(){
 	var urlParams = window.location.href.split('/');
 	gameKey = urlParams[3];
 	playerKey = urlParams[5];
-
 
 	lobbySocket.on('Player Added ' + gameKey, function(data){
 		console.log(data.playerName);

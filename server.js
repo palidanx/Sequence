@@ -8,7 +8,7 @@ var path = require('path');
 var io = require('socket.io')(http);
 
 var router = express.Router();
-const port=8080; 
+var port = process.env.PORT || 8080;
 
 var firebase = require("firebase");
 var config = {

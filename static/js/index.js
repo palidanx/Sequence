@@ -39,8 +39,7 @@ function newGame(){
 		console.log("3 Players");
 		numPlayers = 3;
 	}
-	var baseUrl = 'http://localhost:8080/';
-	var url = baseUrl + 'createLobby';
+	var url = '/createLobby';
 	console.log("Creating game(" + playerName + "," + gameType + "," + numPlayers + ")");
 	$.post(url, {
 		playerName: playerName,
@@ -74,19 +73,3 @@ function joinGame(_gameCode){
 		document.location.href = "/" + gameKey + '/lobby/' + playerKey;
 	}, 'json')
 }
-/*function joinGame(){
-	console.log("Joining Game");
-	gameKey = document.getElementById('gameKey').value;
-	var playerName = document.getElementById('playerName_2').value;
-	var baseUrl = 'http://localhost:8080/';
-	var url = baseUrl + 'joinGame';
-	$.post(url, {
-		gameKey: gameKey,
-		playerName: playerName
-	}, function(data){
-		var gameKey = data.gameKey;
-		var playerKey = data.playerKey;
-		lobbySocket.emit('Joined Lobby', {gameKey: gameKey, playerName: playerName});
-		document.location.href = baseUrl + gameKey + '/lobby/' + playerKey;
-	}, 'json')
-};*/
