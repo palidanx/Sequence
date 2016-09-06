@@ -51,7 +51,7 @@ function newGame(){
 		var playerKey = data.playerKey;
 		console.log(gameKey);
 		lobbySocket.emit('Created Lobby', {gameKey: gameKey});
-		document.location.href = baseUrl + gameKey + '/lobby/' + playerKey;
+		document.location.href = "/" + gameKey + '/lobby/' + playerKey;
 	}, 'json')
 };
 
