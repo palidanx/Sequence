@@ -111,7 +111,7 @@ function playMove(row, col, cardNum, _playerColor){
 			numPlayers: numPlayers
 
 		})
-		playMove(cardNum);
+		playCard(cardNum);
 	}, 'json')
 
 	canMove = false;
