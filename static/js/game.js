@@ -24,7 +24,6 @@ var canMove = false;
 
 function renderBoard(_board){
 	board = _board;
-	console.log(board);
 	for (var i = 0 ; i < 100; i++){
 		if (board[i]!=0){
 				var idString = "r" + Math.floor(i/10) + "c" + i%10;
@@ -84,22 +83,16 @@ function renderHand(_playerHand){
 	}
 }
 
-function playMove(row, col, cardNum, _playerColor){
-	var url = '/'+gameKey+'/playPiece/' + playerKey;
-	var url2 = '/'+gameKey+'/playCard/' + playerKey + '/' + cardNum;
-	$.get(url2, function(data){
-		console.log("Telling the Socket the player moved");
-		board[parseInt(row) * 10 + parseInt(col)] = _playerColor;
-		renderBoard(board);
-		gameSocket.emit('Player Moved', {
-			playerNum: playerNum,
-			gameKey: gameKey,
-			board: board,
-			numPlayers: numPlayers
-
-		})
+function playCard(cardNum){
+	var url = '/' + gameKey + '/playCard/' + playerKey + '/' + cardNum;
+	$.get(url, function(data){
 		renderHand(data);
 	})
+}
+
+function playMove(row, col, cardNum, _playerColor){
+	var url = '/' + gameKey + '/playPiece/' + playerKey;
+	
 	var removeCard = false;
 	if (_playerColor == 0)
 		removeCard = true;
@@ -108,7 +101,19 @@ function playMove(row, col, cardNum, _playerColor){
 		col: col,
 		removeCard: removeCard
 	}, function(data){
+		console.log("Telling the Socket the player moved");
+		console.log(data);
+		renderBoard(convertBoardToOneDString(data));
+		gameSocket.emit('Player Moved', {
+			playerNum: playerNum,
+			gameKey: gameKey,
+			board: data,
+			numPlayers: numPlayers
+
+		})
+		playMove(cardNum);
 	}, 'json')
+
 	canMove = false;
 }
 
@@ -134,7 +139,7 @@ $(document).ready(function(){
 	var turnMessage = gameKey + ' Player Turn ' + playerNum;
 	gameSocket.on(turnMessage, function(data){
 		canMove = true;
-		console.log(data.data);
+		console.log(data.message);
 	})
 	var lineMessage = 'Line Made ' + gameKey;
 	gameSocket.on(lineMessage, function(data){
@@ -162,7 +167,6 @@ function OEJinHand(_hand){
 function TEJinHand(_hand){
 	var hand = _hand;
 	for (var i = 0 ; i < playerHand.length; i++){
-
 		if (playerHand[i] == 'dJ' || playerHand[i] == 'cJ'){
 			console.log('Has TEJ');
 			return [true, i];
@@ -174,10 +178,10 @@ function TEJinHand(_hand){
 function cardInHand(card, _handUrls){
 	for (var i = 0 ; i < _handUrls.length; i++){
 		if (card.includes(_handUrls[i])){
-			return [true, i];
+			return i;
 		}
 	}
-	return [false, -1];
+	return -1;
 }
 
 function convertBoardInto2DArray(board, playerColor){
@@ -243,236 +247,8 @@ function checkAndRender(line){
 	}
 }
 
-function checkForLines(board, _row, _col){
-	var tdboard = convertBoardInto2DArray(board);
-	var row = parseInt(_row);
-	var col = parseInt(_col);
-	var r1 = Math.max(0, row - 4);
-	var r2 = Math.min(9, row + 4);
-	var c1 = Math.max(0, col - 4);
-	var c2 = Math.min(9, col + 4);
 
-	console.log(r1 + " " + r2 + " " + c1 + " " + c2);
 
-	var horizontal = checkHorizontal([r1,r2], [c1,c2], row, col, tdboard);
-	var vertical = checkVertical([r1,r2], [c1,c2], row, col, tdboard);
-	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
-	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
-
-	console.log(ndiagonal);
-
-	var numLines = 0;
-	numLines+=checkAndRender(horizontal);
-	numLines+=checkAndRender(vertical);
-	numLines+=checkAndRender(ndiagonal);
-	numLines+=checkAndRender(pdiagonal);
-
-	if (numLines == 0)
-		return false;
-	else{
-		gameSocket.emit('Line Made', {
-			gameKey : gameKey,
-			playerName: playerName,
-			board: board,
-			score: score
-		});  
-		return true;
-	}
-}
-
-function checkHorizontal(rArray, cArray, row, col, tdboard){
-	console.log(tdboard)
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	console.log(r1 + " " + r2 + " " + c1 + " " + c2);
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	for (var i = (col - 1); i >= c1; i--){
-		if (tdboard[row][i] == playerColor ){
-			bArray.push([row, i]);
-			bscore ++;
-		}
-		else
-			break;
-	}
-	console.log(bscore);
-	for (var i = col + 1; i <= c2; i++){
-		if (tdboard[row][i] == playerColor){
-			fArray.push([row, i]);
-			fscore ++;
-		}
-		else
-			break;
-	}
-	console.log("fscore: " + fscore);
-	var score = fscore + bscore + 1;
-	if (score < 5)
-		return null
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		console.log("YOU MADE A LINE");
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-}
-function checkVertical(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	for (var i = row - 1; i >= r1; i--){
-		if (board[i][col] == playerColor){
-			bArray.push([i, col]);
-			bscore ++;
-		}
-		else
-			break;
-	}
-	for (var i = row + 1; i <= r2; i++){
-		if (board[i][col] == playerColor){
-			fArray.push([i, col]);
-			fscore ++;
-		}
-		else
-			break;
-	}
-	console.log(' VERT bscore: ' + bscore + ', fscore: '+ fscore);
-	var score = fscore + bscore + 1;
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-	return null;
-}
-function checkNDiagonal(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	var i = row - 1, j = col - 1;
-	for ( ;i >= r1 && j >=c1; ){
-		if (board[i][j] == playerColor){
-			bArray.push([i, j]);
-			bscore ++;
-			i--, j--;
-		}
-		else
-			break;
-	}
-	var i = row + 1; j = col + 1;
-	for ( ;i <= r2 && j <= c2; ){
-		if (board[i][j] == playerColor){
-			fArray.push([i, j]);
-			fscore ++;
-			i++, j++;
-		}
-		else
-			break;
-	}	
-	console.log(' NDIAG bscore: ' + bscore + ', fscore: '+ fscore);
-	var score = fscore + bscore + 1;
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		console.log("YOU MADE A LINE");
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-	return null;
-}
-function checkPDiagonal(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	var i = row + 1, j = col - 1;
-	for ( ;i <= r2 && j >=c1; ){
-		if (board[i][j] == playerColor){
-			bArray.push([i, j]);
-			bscore ++;
-			i++, j--;
-		}
-		else
-			break;
-	}
-	var i = row - 1; j = col + 1;
-	for ( ;i >= r1 && j <= c2; ){
-		if (board[i][j] == playerColor){
-			fArray.push([i, j]);
-			fscore ++;
-			i--, j++;
-		}
-		else
-			break;
-	}	
-	var score = fscore + bscore + 1;
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-	return null;
-}
 
 $("html").click(function(e){
 	var coordinate = e.target.parentElement.id;
@@ -485,19 +261,17 @@ $("html").click(function(e){
 	}
 
 	var card = e.target.src;
-	var validMove = false;
-	var cardNum = -1;
 	var row = coordinate[1];
 	var col = coordinate[3];
 	var currentPiece = board[parseInt(row + col)];
 
 	if (currentPiece[currentPiece.length - 1] == 'l'){
-		console.log("Part of line already, can't be touched");
+		alert("Part of line already, can't be touched");
 		return null;
 	}
 
 	if (currentPiece == playerColor){
-		console.log("Thats your piece");
+		alert("Thats your piece");
 		return null;
 	}
 
@@ -506,20 +280,17 @@ $("html").click(function(e){
 	var hasTEJ = TEJinHand(playerHand)[0];
 	var cardNumTEJ = TEJinHand(playerHand)[1];
 
-	var hasCard = cardInHand(card, playerHandUrls)[0];
 	var cardNum = cardInHand(card, playerHandUrls)[1];
 
 	if (currentPiece == "0"){
-		if (hasCard){
+		if (cardNum != -1){
 			console.log("Playing card");
-			if (!checkForLines(board, parseInt(row), parseInt(col)))
-				playMove(row, col, cardNum, playerColor);
+			playMove(row, col, cardNum, playerColor);
 			return null;
 		}
 		else if(hasTEJ){
 			console.log("Playing Two Eyed Jack");
-			if (!checkForLines(board, parseInt(row), parseInt(col)))
-				playMove(row, col, cardNumTEJ, playerColor);
+			playMove(row, col, cardNumTEJ, playerColor);
 			return null;
 		}
 		else{

@@ -54,7 +54,7 @@ gameSocket.on('connection', function(socket){
 	console.log('User Connected to Game');
 
 	socket.on('Player Moved', function(data){
-		console.log('- Player moved');
+		console.log(' - Player moved');
 		var gameKey = data.gameKey;
 		var playerKey = data.playerKey;
 		var board = data.board;
@@ -67,7 +67,7 @@ gameSocket.on('connection', function(socket){
 		var messageEvent = gameKey + " Player Turn " + ((playerNum + 1) % numPlayers);
 		console.log(messageEvent);
 		gameSocket.emit(messageEvent, {
-			data: "Your turn"
+			message: "Your turn"
 		})
 	})
 
@@ -180,7 +180,7 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 	var hand;
 	var remainingDeck;
 	console.log("Playing card for " + playerId + " in game " + gameKey + "...");
-	firebaseGames.child(gameKey + '/game').once('value').then(function(snapshot){
+	firebaseGames.child(gameKey).once('value').then(function(snapshot){
 		//console.log(snapshot.val());
 		data = snapshot.val();
 		hand = data.players[playerId].hand;
@@ -189,8 +189,8 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 		//console.log(remainingDeck);
 		hand[cardNum] = remainingDeck[0];
 		remainingDeck.splice(0,1);
-		firebaseGames.child(gameKey+'/game/remainingDeck').set(remainingDeck);
-		firebaseGames.child(gameKey+'/game/players/'+playerId+'/hand').set(hand);
+		firebaseGames.child(gameKey+'/remainingDeck').set(remainingDeck);
+		firebaseGames.child(gameKey+'/players/'+playerId+'/hand').set(hand);
 		res.send(hand);
 	});
 });
@@ -293,7 +293,8 @@ router.get("/initializeGame/:gameKey", function(req, res) {
 		var keysIndex = Object.keys(firebasePlayers);
 		numPlayers = keysIndex.length;
 		console.log(numPlayers);
-		var game = new Game(numPlayers);
+		var game = new Game();
+		game.newGame(numPlayers);
 		var players = game.getPlayers();
 		board = game.getBoard();
 		remainingDeck = game.getRemainingDeck();
@@ -335,8 +336,7 @@ router.post("/:gameKey/playPiece/:playerKey", function(req, res){
 	var removePiece = req.body.removePiece;
 	//console.log(gameKey);
 	console.log("Playing piece...");
-	res.send("Piece Played");
-	firebaseGames.child(gameKey + '/game/').once('value').then(function(snapshot){
+	firebaseGames.child(gameKey).once('value').then(function(snapshot){
 
 		var data = snapshot.val();
 		var board = data.board;
@@ -347,14 +347,16 @@ router.post("/:gameKey/playPiece/:playerKey", function(req, res){
 				currentTurn = keysIndex[(i + 1) % keysIndex.length];
 		}
 		var playerColor = data.players[playerId].color;
+		console.log("Player Color: " + playerColor);
 
 		board[row][col] = playerColor;
+		console.log(board);
 		if (removePiece == true)
 			board[row][col] = 0;
 		console.log("Piece Played");
 		
-		firebaseGames.child(gameKey+"/game/board").set(board);
-		firebaseGames.child(gameKey+'/game/currentTurn').set(currentTurn);
+		firebaseGames.child(gameKey+"/board").set(board);
+		firebaseGames.child(gameKey+'/currentTurn').set(currentTurn);
 		res.send(board);
 	});
 	
@@ -377,7 +379,7 @@ router.post("/:gameKey/madeLine/:playerKey", function(req, res){
 	var playerKey = req.params.playerKey;
 	var lineArray = req.body.lineArray;
 	console.log(lineArray);
-	firebaseGames.child(gameKey + '/game').once('value').then(function(snapshot){
+	firebaseGames.child(gameKey).once('value').then(function(snapshot){
 		console.log("Got data from firebase");
 		var data = snapshot.val();
 		var board = data.board;
@@ -388,8 +390,8 @@ router.post("/:gameKey/madeLine/:playerKey", function(req, res){
 		}
 		var score = data.players[playerKey].score + 1;
 		console.log(board);
-		firebaseGames.child(gameKey + "/game/players/" + playerKey + "/score").set(score);
-		firebaseGames.child(gameKey + "/game/board").set(board);
+		firebaseGames.child(gameKey + "/players/" + playerKey + "/score").set(score);
+		firebaseGames.child(gameKey + "/board").set(board);
 		res.send({
 			board: board,
 			score: score

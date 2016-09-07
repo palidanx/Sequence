@@ -63,6 +63,8 @@ function joinGame(_gameCode){
 	console.log(gameCode);
 	var url = '/joinGame';
 	var playerName = $('#playerName').val();
+	if (playerName == null)
+		return;
 	$.post(url, {
 		gameCode: gameCode,
 		playerName: playerName
