@@ -184,7 +184,6 @@ router.get('/:gameKey/playCard/:playerId/:cardNum', function(req, res){
 		//console.log(snapshot.val());
 		data = snapshot.val();
 		hand = data.players[playerId].hand;
-		console.log(hand);
 		remainingDeck = data.remainingDeck;
 		//console.log(remainingDeck);
 		hand[cardNum] = remainingDeck[0];

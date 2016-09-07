@@ -85,7 +85,9 @@ function renderHand(_playerHand){
 
 function playCard(cardNum){
 	var url = '/' + gameKey + '/playCard/' + playerKey + '/' + cardNum;
+	console.log(url);
 	$.get(url, function(data){
+		console.log(data);
 		renderHand(data);
 	})
 }
@@ -280,7 +282,7 @@ $("html").click(function(e){
 	var hasTEJ = TEJinHand(playerHand)[0];
 	var cardNumTEJ = TEJinHand(playerHand)[1];
 
-	var cardNum = cardInHand(card, playerHandUrls)[1];
+	var cardNum = cardInHand(card, playerHandUrls);
 
 	if (currentPiece == "0"){
 		if (cardNum != -1){
