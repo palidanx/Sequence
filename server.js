@@ -352,6 +352,10 @@ router.post("/:gameKey/playPiece/:playerKey", function(req, res){
 		console.log(board);
 		if (removePiece == true)
 			board[row][col] = 0;
+		else{
+			var game = new Game();
+			var lines = game.checkForLines(board, row, col, playerColor);
+		}
 		console.log("Piece Played");
 		
 		firebaseGames.child(gameKey+"/board").set(board);

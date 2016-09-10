@@ -43,82 +43,72 @@ var originalDeck = ["s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "sJ",
 		"cA","d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "dJ", "dQ", "dK", "dA"];
 var remainingDeck;
 
-function checkHorizontal(rArray, cArray, row, col, tdboard){
-	console.log(tdboard)
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	console.log(r1 + " " + r2 + " " + c1 + " " + c2);
-	var bscore = 0; fscore = 0;
+function check(rArray, cArray, row, col, rInc, cInc, playerColor){
+	var rMin = rArray[0];
+	var rMax = rArray[1];
+	var cMin = cArray[0];
+	var cMax = cArray[1];
+	var bscore = 0, fscore = 0;
+	var blscore = 0; flscore = 0;
 	var bArray = [], fArray = [];
-	for (var i = (col - 1); i >= c1; i--){
-		if (tdboard[row][i] == playerColor ){
-			bArray.push([row, i]);
-			bscore ++;
+	
+	board[0][0] = playerColor;
+	board[9][9] = playerColor;
+	board[0][9] = playerColor;
+	board[9][0] = playerColor;
+
+	var i = row + rInc, j = col + cInc;
+	while(i <= rMax && j <= cMax){
+		if (board[i][j] == playerColor){
+			bArray.push([i,j]);
+			bscore++;
+			i += rInc;
+			j += cInc;
+		}
+		else if (board[i][j] == (playerColor + 'l')){
+			bArray.push([i,j]);
+			blscore++;
+			i += rInc;
+			j += cInc;
 		}
 		else
 			break;
 	}
-	console.log(bscore);
-	for (var i = col + 1; i <= c2; i++){
-		if (tdboard[row][i] == playerColor){
-			fArray.push([row, i]);
-			fscore ++;
+	console.log("bscore: " + bscore);
+	console.log("blscore: " + blscore);
+	i = row - rInc;
+	j = col - cInc;
+	while(i >= rMin && j >= cMin){
+		if (board[i][j] == playerColor){
+			fArray.push([i, j]);
+			fscore++;
+			i -= rInc;
+			j -= cInc;
 		}
-		else
-			break;
+		else if (board[i][j] == (playerColor + 'l')){
+			fArray.push([i,j]);
+			flscore++;
+			i -= rInc;
+			j -= cInc;
+		}
 	}
+
+	board[0][0] = 0;
+	board[9][9] = 0;
+	board[0][9] = 0;
+	board[9][0] = 0;
 	console.log("fscore: " + fscore);
-	var score = fscore + bscore + 1;
+	console.log("flscore: " + flscore);
+	var score = fscore + flscore + blscore + bscore + 1;
 	if (score < 5)
 		return null
 	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		console.log("YOU MADE A LINE");
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-}
-function checkVertical(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	for (var i = row - 1; i >= r1; i--){
-		if (board[i][col] == playerColor){
-			bArray.push([i, col]);
-			bscore ++;
+		if (blscore == 5){
+			//consider forward line
 		}
-		else
-			break;
-	}
-	for (var i = row + 1; i <= r2; i++){
-		if (board[i][col] == playerColor){
-			fArray.push([i, col]);
-			fscore ++;
+		else if (flscore == 5){
+
 		}
-		else
-			break;
-	}
-	console.log(' VERT bscore: ' + bscore + ', fscore: '+ fscore);
-	var score = fscore + bscore + 1;
-	if (score == 9){
 		var lineArray = bArray;
 		lineArray.push([row, col]);
 		lineArray.push(fArray);
@@ -131,111 +121,17 @@ function checkVertical(rArray, cArray, row, col, board){
 		return [1, lineArray, false];
 	}
 	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
+		if (blscore == 5 || flscore == 5)
+			return null;
+		else {
+			var lineArray = bArray;
+			lineArray.push([row, col]);
+			lineArray.push(fArray);
+			return [1, lineArray, true];
+		}	
 	}
-	return null;
 }
-function checkNDiagonal(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	var i = row - 1, j = col - 1;
-	for ( ;i >= r1 && j >=c1; ){
-		if (board[i][j] == playerColor){
-			bArray.push([i, j]);
-			bscore ++;
-			i--, j--;
-		}
-		else
-			break;
-	}
-	var i = row + 1; j = col + 1;
-	for ( ;i <= r2 && j <= c2; ){
-		if (board[i][j] == playerColor){
-			fArray.push([i, j]);
-			fscore ++;
-			i++, j++;
-		}
-		else
-			break;
-	}	
-	console.log(' NDIAG bscore: ' + bscore + ', fscore: '+ fscore);
-	var score = fscore + bscore + 1;
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		console.log("YOU MADE A LINE");
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-	return null;
-}
-function checkPDiagonal(rArray, cArray, row, col, board){
-	var r1= rArray[0];
-	var r2 = rArray[1];
-	var c1 = cArray[0];
-	var c2 = cArray[1];
-	var bscore = 0; fscore = 0;
-	var bArray = [], fArray = [];
-	var i = row + 1, j = col - 1;
-	for ( ;i <= r2 && j >=c1; ){
-		if (board[i][j] == playerColor){
-			bArray.push([i, j]);
-			bscore ++;
-			i++, j--;
-		}
-		else
-			break;
-	}
-	var i = row - 1; j = col + 1;
-	for ( ;i >= r1 && j <= c2; ){
-		if (board[i][j] == playerColor){
-			fArray.push([i, j]);
-			fscore ++;
-			i--, j++;
-		}
-		else
-			break;
-	}	
-	var score = fscore + bscore + 1;
-	if (score == 9){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [2, lineArray];
-	}
-	else if (score == 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, false];
-	}
-	else if (score > 5){
-		var lineArray = bArray;
-		lineArray.push([row, col]);
-		lineArray.push(fArray);
-		return [1, lineArray, true];
-	}
-	return null;
-}
+
 
 var Game = function(){};
 
@@ -254,23 +150,21 @@ Game.prototype.newGame = function(numPlayers){
 	remainingDeck = init[1];
 }
 
-Game.prototype.checkForLines = function checkForLines(board, row, col){
-	var tdboard = convertBoardInto2DArray(board);
+Game.prototype.checkForLines = function checkForLines(_board, _row, _col, playerColor){
+	board = _board;
 	var row = parseInt(_row);
 	var col = parseInt(_col);
-	var r1 = Math.max(0, row - 4);
-	var r2 = Math.min(9, row + 4);
-	var c1 = Math.max(0, col - 4);
-	var c2 = Math.min(9, col + 4);
+	var r1 = Math.max(0, row - 5);
+	var r2 = Math.min(9, row + 5);
+	var c1 = Math.max(0, col - 5);
+	var c2 = Math.min(9, col + 5);
 
 	console.log(r1 + " " + r2 + " " + c1 + " " + c2);
 
-	var horizontal = checkHorizontal([r1,r2], [c1,c2], row, col, tdboard);
-	var vertical = checkVertical([r1,r2], [c1,c2], row, col, tdboard);
-	var ndiagonal = checkNDiagonal([r1,r2], [c1,c2], row, col, tdboard);
-	var pdiagonal = checkPDiagonal([r1,r2], [c1,c2], row, col, tdboard);
-
-	console.log(ndiagonal);
+	var horizontal = check([r1, r2], [c1, c2], row, col, 0, 1, playerColor);
+	var vertical = check([r1, r2], [c1, c2], row, col, 1, 0, playerColor);
+	var ndiagonal = check([r1, r2], [c1, c2], row, col, -1, 1, playerColor);
+	var pdiagonal = check([r1, r2], [c1, c2], row, col, 1, 1, playerColor); 
 
 	var numLines = 0;
 	numLines+=checkAndRender(horizontal);
